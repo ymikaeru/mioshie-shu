@@ -37,6 +37,7 @@
   </form>
 </main>
 <script>
+  if(location.protocol==='http:'&&!/^(localhost|127\.|\[::1\])/.test(location.hostname))location.replace('https:'+location.href.slice(5));  // HTTPS: crypto.subtle só funciona em contexto seguro
   // Mesma senha do Mioshie Zenshu; só o hash SHA-256 fica no código.
   const HASH = '925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787';
   const CHAVE = 'mioshie_shu_auth';
