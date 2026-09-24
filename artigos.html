@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artigos lidos · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1>Artigos lidos nos dias de visita</h1>
+  <p class="muted" style="max-width:760px">Ensaios e artigos (Eikō, Chijō Tengoku, Criação da Civilização…) lidos durante as visitas, com o texto em português e o original em japonês, e os dias em que foram lidos e comentados.</p>
+  <div class="barra-res">
+    <input class="filtro-simples" id="filtro" type="search" placeholder="Filtrar por título (PT ou JP)" aria-label="Filtrar artigos" style="margin:0">
+    <div class="seg"><button data-o="vol" class="on">Por volume</button><button data-o="lidos">Mais comentados</button></div>
+  </div>
+  <div class="lista-artigos" id="lista"><div class="carregando">Carregando…</div></div>
+</main>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('artigos.html');
+MS.index().then(idx => {
+  let ordem = 'vol';
+  const desenhar = () => {
+    const q = MS.dobra(document.getElementById('filtro').value.trim());
+    let lista = idx.artigos.filter(a => !q || MS.dobra((a.t || '') + ' ' + (a.tj || '')).includes(q));
+    if (ordem === 'lidos') lista = [...lista].sort((a, b) => b.lidos.length - a.lidos.length);
+    let volAnt = null;
+    document.getElementById('lista').innerHTML = lista.map(a => {
+      const cab = ordem === 'vol' && a.v !== volAnt ? `<h2>Volume ${a.v}</h2>` : '';
+      volAnt = a.v;
+      const dias = [...new Set(a.lidos.map(i => idx.porId[i].d))];
+      return `${cab}<div class="res">
+        <h3><a href="artigo.html?id=${a.id}">${MS.esc(a.t || a.tj)}</a>${a.t && a.tj ? `<small>${MS.esc(a.tj)}</small>` : ''}</h3>
+        <div class="meta">${a.fonte ? `<span>${MS.esc(a.fonte)}</span>` : ''}
+          <span>${a.lidos.length ? `comentado em ${a.lidos.length} ${a.lidos.length === 1 ? 'trecho' : 'trechos'}, ${dias.length} ${dias.length === 1 ? 'dia' : 'dias'}` : 'sem comentário ligado'}</span></div>
+      </div>`;
+    }).join('') || '<p class="muted">Nenhum artigo encontrado.</p>';
+  };
+  document.getElementById('filtro').oninput = desenhar;
+  document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+    ordem = b.dataset.o;
+    document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b));
+    desenhar();
+  });
+  desenhar();
+});
+</script>
+</body>
+</html>

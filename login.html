@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, var(--bg) 0%, var(--bg-2) 100%); }
+  .cartao { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 44px 36px; width: min(400px, calc(100% - 32px));
+    text-align: center; box-shadow: 0 12px 40px rgba(0, 0, 0, .08); animation: sobe .45s ease-out; }
+  @keyframes sobe { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .cartao h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  .cartao .sub { color: var(--ink-3); font-size: .88rem; margin: 0 0 4px; }
+  .cartao .kanji { font-family: var(--jp); color: var(--accent-2); margin: 0 0 26px; }
+  .cartao input { width: 100%; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg);
+    font-size: 1rem; text-align: center; outline: none; }
+  .cartao input:focus { border-color: var(--accent-2); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 18%, transparent); }
+  .cartao input.erro { border-color: #d32f2f; }
+  .cartao button { width: 100%; margin-top: 14px; padding: 13px; border: 0; border-radius: 10px; background: var(--accent-2);
+    color: #fff; font-weight: 600; font-size: 1rem; cursor: pointer; }
+  .cartao button:hover { filter: brightness(.92); }
+  .erro-msg { color: #d32f2f; font-size: .86rem; margin-top: 12px; }
+</style>
+</head>
+<body>
+<main class="cartao">
+  <h1>Mioshie-shu</h1>
+  <p class="sub">Ensinamentos dos dias de visita · estudo</p>
+  <p class="kanji">御教え集</p>
+  <p class="muted small">Por favor, insira a senha de acesso.</p>
+  <form id="form" autocomplete="off">
+    <input type="password" id="senha" placeholder="Senha" aria-label="Senha" autofocus>
+    <button type="submit">Entrar</button>
+    <p class="erro-msg" id="erro" hidden>Senha incorreta. Tente novamente.</p>
+  </form>
+</main>
+<script>
+  // Mesma senha do Mioshie Zenshu; só o hash SHA-256 fica no código.
+  const HASH = '925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787';
+  const CHAVE = 'mioshie_shu_auth';
+  try { const t = localStorage.getItem('ms-tema'); if (t) document.documentElement.dataset.theme = t; } catch (e) { /* sem storage */ }
+
+  function destino() {
+    const r = new URLSearchParams(location.search).get('redirect') || 'index.html';
+    // só caminhos relativos deste site (evita redirecionar para outro domínio)
+    return /^[\w.-]+\.html([?#].*)?$/.test(r) ? r : 'index.html';
+  }
+  try { if (sessionStorage.getItem(CHAVE) === HASH) location.replace(destino()); } catch (e) { /* sem storage */ }
+
+  async function sha256(texto) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  const senha = document.getElementById('senha'), erro = document.getElementById('erro');
+  document.getElementById('form').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (await sha256(senha.value) === HASH) {
+      try { sessionStorage.setItem(CHAVE, HASH); } catch (err) { /* sem storage */ }
+      location.replace(destino());
+    } else {
+      erro.hidden = false;
+      senha.classList.add('erro');
+      senha.value = '';
+      senha.focus();
+    }
+  });
+  senha.addEventListener('input', () => { erro.hidden = true; senha.classList.remove('erro'); });
+</script>
+</body>
+</html>

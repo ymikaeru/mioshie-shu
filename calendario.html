@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendário · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1>Calendário das visitas</h1>
+  <p class="muted">Cada dia marcado tem registros. A cor indica quantos trechos há naquele dia; clique para lê-lo na sequência original.</p>
+  <div class="anos" id="anos"><div class="carregando">Carregando…</div></div>
+</main>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('calendario.html');
+MS.index().then(idx => {
+  const porDia = {};
+  for (const t of idx.trechos) (porDia[t.d] = porDia[t.d] || []).push(t);
+  const max = Math.max(...Object.values(porDia).map(x => x.length));
+  const meses = MS.meses(idx);
+  const anos = [...new Set(meses.map(m => m.slice(0, 4)))];
+  document.getElementById('anos').innerHTML = anos.map(a => `<section><h2>${a}</h2><div class="meses">
+    ${meses.filter(m => m.startsWith(a)).map(m => {
+      const [y, mm] = m.split('-').map(Number);
+      const primeiro = new Date(y, mm - 1, 1).getDay();
+      const nDias = new Date(y, mm, 0).getDate();
+      const qtd = Object.keys(porDia).filter(d => d.startsWith(m)).reduce((s, d) => s + porDia[d].length, 0);
+      let cel = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(x => `<span style="opacity:.8">${x}</span>`).join('') + '<span></span>'.repeat(primeiro);
+      for (let d = 1; d <= nDias; d++) {
+        const iso = `${m}-${String(d).padStart(2, '0')}`;
+        const ts = porDia[iso];
+        cel += ts
+          ? `<a href="${MS.link(ts[0])}" style="--a:${(0.2 + 0.8 * ts.length / max).toFixed(2)}" title="${MS.dataExtenso(iso)}: ${ts.length} trechos (vol. ${[...new Set(ts.map(t => t.v))].join(', ')})">${d}</a>`
+          : `<span>${d}</span>`;
+      }
+      return `<div class="mes"><h4><a href="explorar.html?mes=${m}&ano=${a}&modo=ler" style="color:inherit">${MS.mesExtenso(m).split(' ')[0]}</a><small>${qtd} trechos</small></h4><div class="dias">${cel}</div></div>`;
+    }).join('')}</div></section>`).join('');
+});
+</script>
+</body>
+</html>

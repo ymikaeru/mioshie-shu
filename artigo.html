@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artigo · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <p class="small"><a href="artigos.html">‹ Todos os artigos lidos</a></p>
+  <div id="artigo"><div class="carregando">Carregando…</div></div>
+</main>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('artigos.html');
+(async () => {
+  const id = new URLSearchParams(location.search).get('id');
+  const idx = await MS.index();
+  if (!idx.artigo[id]) { document.getElementById('artigo').innerHTML = '<p>Artigo não encontrado.</p>'; return; }
+  const a = await MS.artigo(id);
+  document.title = `${a.titulo || a.titulo_ja} · Mioshie-shu`;
+  const lidos = idx.artigo[id].lidos.map(i => idx.porId[i]);
+  const el = document.getElementById('artigo');
+  el.innerHTML = `<h1>${MS.esc(a.titulo || a.titulo_ja)}</h1>
+    ${a.titulo && a.titulo_ja ? `<p class="muted" style="font-family:var(--jp);margin-top:-6px">${MS.esc(a.titulo_ja)}</p>` : ''}
+    <div class="artigo-pagina">
+      <div>${MS.htmlArtigo(a, { artigo: {} })}</div>
+      <aside>
+        <div class="painel">
+          <h3 style="margin-top:0">Lido e comentado em</h3>
+          ${lidos.length ? `<ul class="lidos" style="padding-left:18px">${lidos.map(t => `<li><a href="${MS.link(t)}">${MS.dataExtenso(t.d)}</a><br><span class="muted small">vol. ${t.v} · ${MS.esc(t.t)}</span></li>`).join('')}</ul>
+            <a class="small" href="explorar.html?ids=${lidos.map(t => t.id).join(',')}&rotulo=${encodeURIComponent('Comentários sobre “' + (a.titulo || a.titulo_ja) + '”')}&modo=ler">Ler todos os comentários em sequência ›</a>`
+          : '<p class="muted small">Nenhum trecho ligado a este artigo.</p>'}
+        </div>
+      </aside>
+    </div>`;
+  MS.ligarIdioma(el);
+})();
+</script>
+</body>
+</html>

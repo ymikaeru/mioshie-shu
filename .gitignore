@@ -1,0 +1,5 @@
+# fontes originais (.docx e cópias do Zenshu) ficam só na máquina local
+Conteudo Original Traduzido/
+.claude/
+__pycache__/
+*.pyc

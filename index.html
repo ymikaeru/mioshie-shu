@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mioshie-shu · Estudo</title>
+<meta name="description" content="Ensinamentos dos dias de visita (Mioshie-shu, 1951–1954) organizados para estudo: em sequência, por assunto, por tipo e por palavra.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>Mioshie-shu · os ensinamentos dos dias de visita</h1>
+    <p>Registros das palestras de Meishu-sama de 1951 a 1954, reunidos em 33 volumes. O original traz só a data de cada registro; aqui o mesmo texto pode ser lido na ordem original ou reunido por assunto, por tipo de ensinamento e por palavra.</p>
+    <div class="numeros" id="numeros"></div>
+  </section>
+
+  <div class="modos">
+    <a class="modo" href="leitura.html"><div class="ico">📜</div><h3>Em sequência</h3><p>Volume por volume, dia a dia, na ordem original do Zenshu.</p></a>
+    <a class="modo" href="explorar.html"><div class="ico">🔎</div><h3>Explorar e buscar</h3><p>Filtre por assunto, tipo, data e volume, ou busque qualquer palavra.</p></a>
+    <a class="modo" href="macro.html"><div class="ico">▦</div><h3>Visão macro</h3><p>Onde cada assunto aparece ao longo dos meses: o mapa de todo o material.</p></a>
+    <a class="modo" href="artigos.html"><div class="ico">📰</div><h3>Artigos lidos</h3><p>Os ensaios lidos nos dias de visita e todos os dias em que foram comentados.</p></a>
+  </div>
+
+  <h2>Por assunto</h2>
+  <div id="temas"></div>
+
+  <h2>Por tipo de ensinamento</h2>
+  <div class="formatos-grid" id="formatos"></div>
+
+  <h2>Outras formas de entrar</h2>
+  <div class="modos">
+    <a class="modo" href="calendario.html"><h3>Calendário</h3><p>Todos os dias registrados, de agosto de 1951 a abril de 1954.</p></a>
+    <a class="modo" href="glossario.html"><h3>Glossário</h3><p>Termos como Johrei, Shinsenkyo e Izunome, com os trechos onde aparecem.</p></a>
+  </div>
+</main>
+<footer class="rodape-site">Títulos de cada trecho (§) são editoriais, criados na tradução; o original registra apenas a data.</footer>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('index.html');
+MS.index().then(idx => {
+  const dias = new Set(idx.trechos.map(t => t.d)).size;
+  const lidos = idx.artigos.filter(a => a.lidos.length).length;
+  document.getElementById('numeros').innerHTML = [
+    [idx.trechos.length.toLocaleString('pt-BR'), 'trechos'], [dias, 'dias de visita'], [33, 'volumes'], [lidos, 'artigos lidos'],
+  ].map(([n, r]) => `<div>${n}<span>${r}</span></div>`).join('');
+
+  const conta = {};
+  idx.trechos.forEach(t => t.tm.forEach(x => conta[x] = (conta[x] || 0) + 1));
+  document.getElementById('temas').innerHTML = idx.grupos.map(g => `
+    <div class="grupo-temas g-${g.id}"><h3 style="color:var(--cor)">${MS.esc(g.nome)}</h3>
+      <div class="lista-temas">${idx.temas.filter(t => t.grupo === g.id).map(t => `
+        <a class="tema-card" href="explorar.html?tema=${t.id}" title="${MS.esc(t.descricao)}">
+          <span>${MS.esc(t.nome)}</span><small>${conta[t.id] || 0}</small></a>`).join('')}
+      </div></div>`).join('');
+
+  const cf = {};
+  idx.trechos.forEach(t => t.f.forEach(x => cf[x] = (cf[x] || 0) + 1));
+  document.getElementById('formatos').innerHTML = idx.formatos.map(f => `
+    <a class="modo" href="explorar.html?fmt=${f.id}"><h3>${MS.esc(f.nome)} <span class="muted small">${cf[f.id] || 0}</span></h3><p>${MS.esc(f.descricao)}</p></a>`).join('');
+});
+</script>
+</body>
+</html>

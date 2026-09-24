@@ -1,0 +1,34 @@
+{
+ "grupos": [
+  {"id": "saude", "nome": "Saúde"},
+  {"id": "espiritual", "nome": "Espiritual"},
+  {"id": "obra", "nome": "Obra Divina"},
+  {"id": "mundo", "nome": "Mundo"}
+ ],
+ "temas": [
+  {"id": "johrei", "grupo": "saude", "nome": "Johrei", "descricao": "Prática do Johrei: pontos vitais, forma de ministrar, eficácia, Johrei à distância, Omamori."},
+  {"id": "purificacao", "grupo": "saude", "nome": "Purificação e toxinas", "descricao": "Ação purificadora, solidificação e dissolução de toxinas, repurificação, o sentido das doenças como limpeza."},
+  {"id": "medicina", "grupo": "saude", "nome": "Medicina e remédios", "descricao": "Crítica à medicina moderna, toxinas de remédios, injeções, cirurgias, vacinas, remédio herbal, superstição médica."},
+  {"id": "tuberculose", "grupo": "saude", "nome": "Tuberculose", "descricao": "Tuberculose e o livro Terapia da Tuberculose pela Fé; novos remédios, BCG, contágio."},
+  {"id": "doencas", "grupo": "saude", "nome": "Doenças específicas", "descricao": "Explicação de enfermidades concretas: câncer, disenteria, doença mental, epilepsia, gripe, olhos, pele etc."},
+  {"id": "familia", "grupo": "saude", "nome": "Família, mulher, parto e crianças", "descricao": "Gravidez, parto, doenças femininas, casamento, educação e saúde das crianças, relações familiares."},
+  {"id": "mundo_espiritual", "grupo": "espiritual", "nome": "Mundo espiritual e possessão", "descricao": "Estrutura do Mundo Espiritual, espíritos, possessão, espíritos animais (raposa, dragão, cobra), máculas, espírito guardião."},
+  {"id": "antepassados", "grupo": "espiritual", "nome": "Antepassados, altar e Imagem Sagrada", "descricao": "Culto aos antepassados, altar budista e xintoísta, Imagem de Komyo Nyorai, Goshintai, entronização, cemitério."},
+  {"id": "deus_plano", "grupo": "espiritual", "nome": "Deus, divindades e Plano Divino", "descricao": "Deus Supremo, Kannon, Izunome, Messias, Miroku, plano e tempo de Deus, teologia vertical e horizontal."},
+  {"id": "transicao", "grupo": "espiritual", "nome": "Transição para o Mundo do Dia", "descricao": "Mudança do Mundo da Noite para o Dia, Juízo Final, aumento do elemento fogo, profecias, fim das curas antigas."},
+  {"id": "religioes", "grupo": "espiritual", "nome": "Outras religiões", "descricao": "Budismo, cristianismo, xintoísmo, Oomoto, Nichiren, novas religiões e comparação com a Igreja."},
+  {"id": "fe_conduta", "grupo": "espiritual", "nome": "Fé e postura do fiel", "descricao": "Atitude correta na fé, sinceridade, ordem, erros de fé, gratidão, destino e sorte, bem e mal no cotidiano."},
+  {"id": "difusao", "grupo": "obra", "nome": "Difusão e organização", "descricao": "Expansão da Igreja no Japão, Havaí, América e Ásia; livros e jornais da Igreja; organização, ministros, cultos e festivais."},
+  {"id": "paraiso", "grupo": "obra", "nome": "Paraíso Terrestre", "descricao": "Protótipos do Paraíso Terrestre: Shinsenkyo (Hakone), Zuiunkyo (Atami), Heiankyo (Kyoto); jardins e construções."},
+  {"id": "arte", "grupo": "obra", "nome": "Arte e Museu", "descricao": "Museu de Arte de Hakone e Atami, coleção, exposições, crítica de arte, arte japonesa e ocidental, beleza."},
+  {"id": "agricultura", "grupo": "obra", "nome": "Agricultura Natural", "descricao": "Método de cultivo sem adubos, poder do solo, resultados de colheita, adubos como superstição."},
+  {"id": "mundo_politica", "grupo": "mundo", "nome": "Situação mundial e política", "descricao": "Guerra Fria, comunismo, bomba atômica e de hidrogênio, EUA e URSS, política e governo japonês, eleições, corrupção."},
+  {"id": "ciencia_sociedade", "grupo": "mundo", "nome": "Ciência, imprensa e civilização", "descricao": "Ciência e seus limites, materialismo, civilização, imprensa e jornalistas, justiça, crimes e questões sociais."},
+  {"id": "meishu_sama", "grupo": "mundo", "nome": "Meishu-sama: vivências e escritos", "descricao": "Experiências pessoais de Meishu-sama, sua própria purificação, sua missão e luz, seus escritos e forma de trabalhar."}
+ ],
+ "formatos": [
+  {"id": "pr", "nome": "Pergunta e resposta", "descricao": "Um fiel relata um caso (Pergunta) e Meishu-sama orienta (Orientação)."},
+  {"id": "leitura", "nome": "Leitura e comentário", "descricao": "Leitura de um artigo ou ensaio seguida do comentário de Meishu-sama."},
+  {"id": "assunto", "nome": "Assunto do momento", "descricao": "Palestra livre sobre acontecimentos e temas daquele dia."}
+ ]
+}

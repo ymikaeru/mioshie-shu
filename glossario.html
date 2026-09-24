@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossário · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1>Glossário</h1>
+  <p class="muted" style="max-width:760px">Termos recorrentes nos ensinamentos, com uma definição breve e todos os trechos em que aparecem. Clique no número para ver os trechos no tempo e lê-los em sequência.</p>
+  <input class="filtro-simples" id="filtro" type="search" placeholder="Filtrar termos" aria-label="Filtrar termos">
+  <div class="gloss" id="lista"><div class="carregando">Carregando…</div></div>
+</main>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('glossario.html');
+MS.index().then(idx => {
+  const itens = [...idx.glossario].sort((a, b) => a.termo.localeCompare(b.termo, 'pt'));
+  const desenhar = () => {
+    const q = MS.dobra(document.getElementById('filtro').value.trim());
+    document.getElementById('lista').innerHTML = itens.filter(g => !q || MS.dobra(g.termo + ' ' + g.def).includes(q)).map(g => `
+      <div class="item"><h3><span>${MS.esc(g.termo)}</span><a class="chip kw" href="explorar.html?g=${encodeURIComponent(g.termo)}">${g.ids.length} trechos</a></h3>
+        <p>${MS.esc(g.def)}</p></div>`).join('');
+  };
+  document.getElementById('filtro').oninput = desenhar;
+  desenhar();
+});
+</script>
+</body>
+</html>

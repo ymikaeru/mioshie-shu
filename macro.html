@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visão macro · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <h1>Visão macro</h1>
+  <p class="muted" style="max-width:760px">Cada linha é um assunto; cada coluna, um mês de visitas. Quanto mais forte a cor, mais trechos daquele assunto naquele mês. Clique numa célula para ler esses trechos.</p>
+  <div class="barra-res">
+    <div class="seg" style="margin-left:0" id="escala">
+      <button data-e="tema" class="on" title="Cada linha usa sua própria escala: mostra quando o assunto se concentra">Escala por assunto</button><button data-e="geral" title="Mesma escala para todos: mostra os assuntos mais frequentes">Escala geral</button>
+    </div>
+  </div>
+  <div class="mapa-wrap"><table class="mapa" id="mapa"></table>
+    <div class="legenda">menos <i style="--a:.12"></i><i style="--a:.35"></i><i style="--a:.6"></i><i style="--a:.9"></i> mais</div>
+  </div>
+
+  <h2>Assuntos que aparecem juntos</h2>
+  <p class="muted" style="max-width:760px">Quantos trechos tratam ao mesmo tempo dos dois assuntos. Mostra as ligações entre temas espalhados, como tuberculose e mundo espiritual ou arte e Paraíso Terrestre. Clique para ler os trechos em comum.</p>
+  <div class="mapa-wrap"><table class="mapa" id="coocorrencia"></table></div>
+</main>
+<script src="js/common.js"></script>
+<script>
+MS.cabecalho('macro.html');
+(async () => {
+  const idx = await MS.index();
+  const meses = MS.meses(idx);
+  const cont = {}, total = {};
+  for (const t of idx.trechos) {
+    const m = t.d.slice(0, 7);
+    for (const x of t.tm) {
+      cont[x] = cont[x] || {};
+      cont[x][m] = (cont[x][m] || 0) + 1;
+      total[x] = (total[x] || 0) + 1;
+    }
+  }
+  const dica = document.createElement('div');
+  dica.className = 'dica';
+  dica.hidden = true;
+  document.body.append(dica);
+
+  function desenhar(escala) {
+    const maxGeral = Math.max(...idx.temas.map(t => Math.max(0, ...Object.values(cont[t.id] || {}))));
+    let html = `<thead><tr><th></th>${meses.map((m, i) => `<th class="${i && m.endsWith('-01') ? 'ano-ini' : ''}">${MS.mesCurto(m)}</th>`).join('')}<th>total</th></tr></thead><tbody>`;
+    for (const g of idx.grupos) {
+      html += `<tr><th colspan="${meses.length + 2}" style="text-align:left;padding-top:10px" class="g-${g.id}"><span style="color:var(--cor);font-weight:600">${MS.esc(g.nome)}</span></th></tr>`;
+      for (const t of idx.temas.filter(x => x.grupo === g.id)) {
+        const linha = cont[t.id] || {};
+        const max = escala === 'tema' ? Math.max(1, ...Object.values(linha)) : maxGeral;
+        html += `<tr><th><a href="explorar.html?tema=${t.id}">${MS.esc(t.nome)}</a></th>` + meses.map((m, i) => {
+          const n = linha[m] || 0;
+          const cls = (n ? '' : 'zero') + (i && m.endsWith('-01') ? ' ano-ini' : '');
+          return `<td class="${cls}" style="--a:${n ? (0.1 + 0.9 * n / max).toFixed(2) : 0}" data-t="${t.id}" data-m="${m}" data-n="${n}">${n || ''}</td>`;
+        }).join('') + `<td class="total">${total[t.id] || 0}</td></tr>`;
+      }
+    }
+    document.getElementById('mapa').innerHTML = html + '</tbody>';
+  }
+  desenhar('tema');
+  document.querySelectorAll('#escala button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#escala button').forEach(x => x.classList.toggle('on', x === b));
+    desenhar(b.dataset.e);
+  });
+
+  // coocorrência tema × tema
+  const co = {};
+  for (const t of idx.trechos) for (const a of t.tm) for (const b of t.tm) if (a !== b) {
+    co[a] = co[a] || {};
+    co[a][b] = (co[a][b] || 0) + 1;
+  }
+  const maxCo = Math.max(...Object.values(co).flatMap(o => Object.values(o)));
+  document.getElementById('coocorrencia').innerHTML =
+    `<thead><tr><th></th>${idx.temas.map(t => `<th>${MS.esc(t.nome)}</th>`).join('')}</tr></thead><tbody>` +
+    idx.temas.map(a => `<tr><th><a href="explorar.html?tema=${a.id}">${MS.esc(a.nome)}</a></th>${idx.temas.map(b => {
+      const n = (co[a.id] || {})[b.id] || 0;
+      return a.id === b.id ? '<td class="zero"></td>'
+        : `<td class="${n ? '' : 'zero'}" style="--a:${n ? (0.1 + 0.9 * Math.sqrt(n / maxCo)).toFixed(2) : 0}" data-par="${a.id},${b.id}" data-n="${n}">${n || ''}</td>`;
+    }).join('')}</tr>`).join('') + '</tbody>';
+
+  document.addEventListener('click', e => {
+    const td = e.target.closest('td[data-n]');
+    if (!td || td.dataset.n === '0') return;
+    location.href = td.dataset.par ? `explorar.html?tema=${td.dataset.par}` : `explorar.html?tema=${td.dataset.t}&mes=${td.dataset.m}&ano=${td.dataset.m.slice(0, 4)}&modo=ler`;
+  });
+  document.addEventListener('mousemove', e => {
+    const td = e.target.closest('td[data-n]');
+    if (!td || td.dataset.n === '0') { dica.hidden = true; return; }
+    dica.hidden = false;
+    dica.style.left = Math.min(e.clientX + 12, innerWidth - 270) + 'px';
+    dica.style.top = e.clientY + 14 + 'px';
+    dica.textContent = td.dataset.par
+      ? `${idx.tema[td.dataset.par.split(',')[0]].nome} + ${idx.tema[td.dataset.par.split(',')[1]].nome}: ${td.dataset.n} trechos`
+      : `${idx.tema[td.dataset.t].nome} · ${MS.mesExtenso(td.dataset.m)}: ${td.dataset.n} trechos`;
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<script>try{if(sessionStorage.getItem('mioshie_shu_auth')!=='925933144f0b01b062954b29d2dc665c63d5e15083d31d30e35536859bc1f787')location.replace('login.html?redirect='+encodeURIComponent(location.pathname.split('/').pop()+location.search+location.hash))}catch(e){location.replace('login.html')}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorar · Mioshie-shu</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main>
+  <form class="busca" id="form-busca" role="search">
+    <input id="q" type="search" placeholder='Buscar palavras em todo o texto (use "aspas" para frase exata)' autocomplete="off" aria-label="Buscar">
+    <button type="button" class="filtros-btn" id="btn-filtros">Filtros</button>
+  </form>
+  <div class="explorar">
+    <aside class="filtros" id="filtros" aria-label="Filtros"></aside>
+    <section>
+      <div class="chips" id="ativos"></div>
+      <div class="barra-res">
+        <span class="conta" id="conta"></span>
+        <select id="ordem" aria-label="Ordem">
+          <option value="crono">Ordem cronológica</option>
+          <option value="rel">Mais relevantes primeiro</option>
+        </select>
+        <div class="seg" role="tablist" aria-label="Modo de exibição">
+          <button data-modo="lista" class="on">Lista</button><button data-modo="ler">Ler em sequência</button>
+        </div>
+      </div>
+      <div class="painel" id="linha" hidden></div>
+      <div id="resultados"></div>
+    </section>
+  </div>
+</main>
+<script src="js/common.js"></script>
+<script src="js/explorar.js"></script>
+</body>
+</html>
